@@ -1,0 +1,41 @@
+services:
+  myapp:
+    build: .
+    container_name: myapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_NAME: myappdb
+      JWT_SECRET: mysecretkey
+    volumes:
+      - .:/app
+    networks:
+      - mynetwork
+
+  db:
+    image: postgres:13
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: myappdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+    ports:
+      - "5432:5432"
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  db-data:
